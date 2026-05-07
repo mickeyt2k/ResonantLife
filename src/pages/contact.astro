@@ -1,0 +1,93 @@
+---
+import Base from '~/layouts/Base.astro';
+import { site } from '~/config/site';
+---
+
+<Base title="Contact" description={`Get in touch with ${site.name}.`}>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <span class="eyebrow">Contact</span>
+      <h1 style="margin: 0.4rem 0 0.6rem;">Say hello</h1>
+      <p style="color: var(--ink-soft); margin-bottom: 2rem;">
+        Questions, feedback, episode ideas, or just want to introduce yourself — this all goes straight to Mike.
+      </p>
+
+      <form id="contactForm" novalidate>
+        <div class="field">
+          <label for="contactName">Your name</label>
+          <input id="contactName" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="contactEmail">Your email</label>
+          <input id="contactEmail" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" name="message" required></textarea>
+        </div>
+        <!-- Honeypot — bots fill this; humans don't see it -->
+        <div style="position: absolute; left: -10000px; opacity: 0; pointer-events: none;" aria-hidden="true">
+          <label for="contactWebsite">Website</label>
+          <input id="contactWebsite" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" id="contactSubmit" class="btn btn-primary" style="margin-top: 0.5rem;">
+          Send message
+        </button>
+        <p id="contactMsg" class="muted" style="margin-top: 1rem; min-height: 1.4em;" role="status" aria-live="polite"></p>
+      </form>
+
+      <hr class="divider" style="margin: 3rem 0;" />
+
+      <p class="muted" style="font-size: var(--fs-sm);">
+        Prefer email? Write to <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ endpoint: site.contactFormEndpoint }}>
+  const form = document.getElementById('contactForm');
+  const submit = document.getElementById('contactSubmit');
+  const msg = document.getElementById('contactMsg');
+
+  if (form && submit && msg) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = {
+        name: String(data.get('name') || '').trim(),
+        email: String(data.get('email') || '').trim(),
+        message: String(data.get('message') || '').trim(),
+        website: String(data.get('website') || '').trim(), // honeypot
+      };
+      if (!payload.name || !payload.email || !payload.message) {
+        msg.textContent = 'Please fill in all fields.';
+        return;
+      }
+      submit.disabled = true;
+      const original = submit.textContent;
+      submit.textContent = 'Sending…';
+      msg.textContent = '';
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          msg.textContent = "Sent. Mike will reply soon — thank you.";
+          form.reset();
+        } else {
+          const body = await res.json().catch(() => ({}));
+          msg.textContent = body?.error || 'Something went wrong. Please try again.';
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = original;
+      }
+    });
+  }
+</script>

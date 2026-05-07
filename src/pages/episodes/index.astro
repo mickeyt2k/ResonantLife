@@ -1,0 +1,63 @@
+---
+import Base from '~/layouts/Base.astro';
+import EpisodeCard from '~/components/EpisodeCard.astro';
+import { getFeed } from '~/lib/rss';
+
+const feed = await getFeed();
+const episodes = feed.episodes;
+---
+
+<Base title="All episodes" description={`Every episode of ${feed.title}.`}>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Archive</span>
+      <h1 style="margin: 0.4rem 0 1rem;">All episodes</h1>
+      <p style="max-width: 56ch; color: var(--ink-soft); margin-bottom: 2rem;">
+        {episodes.length} episodes and counting. New ones drop monthly.
+      </p>
+
+      <div class="field" style="max-width: 480px; margin-bottom: 2rem;">
+        <label for="epSearch">Search</label>
+        <input
+          id="epSearch"
+          type="search"
+          placeholder="Search by title or topic"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="ep-list cols-2" id="epList">
+        {episodes.map((ep) => (
+          <div class="ep-item" data-title={ep.title.toLowerCase()} data-text={ep.descriptionText.toLowerCase()}>
+            <EpisodeCard episode={ep} />
+          </div>
+        ))}
+      </div>
+
+      <p id="emptyMsg" style="display: none; color: var(--muted); margin-top: 2rem;">
+        No episodes match your search.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const search = document.getElementById('epSearch') as HTMLInputElement | null;
+  const items = Array.from(document.querySelectorAll<HTMLElement>('.ep-item'));
+  const empty = document.getElementById('emptyMsg');
+
+  if (search) {
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      let shown = 0;
+      for (const item of items) {
+        const title = item.getAttribute('data-title') || '';
+        const text = item.getAttribute('data-text') || '';
+        const matches = !q || title.includes(q) || text.includes(q);
+        item.style.display = matches ? '' : 'none';
+        if (matches) shown++;
+      }
+      if (empty) empty.style.display = shown === 0 ? 'block' : 'none';
+    });
+  }
+</script>

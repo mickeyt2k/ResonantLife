@@ -1,0 +1,46 @@
+---
+import { site, navigation } from '~/config/site';
+
+interface Props {
+  pathname?: string;
+}
+const { pathname = '' } = Astro.props;
+
+function isActive(href: string) {
+  if (href === '/') return pathname === '/' || pathname === '';
+  return pathname.startsWith(href);
+}
+---
+
+<header class="site-header" id="siteHeader">
+  <div class="container nav">
+    <a href="/" class="nav-brand" aria-label={`${site.name} — home`}>
+      <span class="nav-brand-mark" aria-hidden="true">R</span>
+      <span>{site.name}</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        {navigation.map((item) => (
+          <li>
+            <a href={item.href} class={isActive(item.href) ? 'active' : ''}>
+              {item.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Subtle border on scroll, no JS frameworks needed
+  const header = document.getElementById('siteHeader');
+  if (header) {
+    const onScroll = () => {
+      if (window.scrollY > 8) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>

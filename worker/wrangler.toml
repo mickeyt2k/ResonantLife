@@ -1,0 +1,20 @@
+name = "resonantlife-api"
+main = "src/index.ts"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes are added via the Cloudflare dashboard once the site is on Cloudflare.
+# Example after launch:
+#   route = { pattern = "www.resonantlife.net/api/*", zone_name = "resonantlife.net" }
+
+# Production secrets — set via:
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put SUBSTACK_PUBLICATION
+# Non-secret env vars below; values can be edited in dashboard.
+[vars]
+ALLOWED_ORIGIN = "https://www.resonantlife.net,https://preview.resonantlife.net"
+CONTACT_TO_EMAIL = "mike@resonant.social"
+CONTACT_FROM_EMAIL = "noreply@resonant.social"
+
+[observability]
+enabled = true

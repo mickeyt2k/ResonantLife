@@ -1,0 +1,29 @@
+---
+import Base from '~/layouts/Base.astro';
+import ListenOn from '~/components/ListenOn.astro';
+import { host, site } from '~/config/site';
+---
+
+<Base title="About" description={`About ${host.name} and ${site.name}.`}>
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <span class="eyebrow">About</span>
+      <h1 style="margin: 0.4rem 0 0.6rem;">Why this podcast exists</h1>
+      <p style="font-size: var(--fs-lg); color: var(--ink-soft);">
+        {site.description}
+      </p>
+
+      <hr class="divider" style="margin: 3rem 0;" />
+
+      <h2 style="margin-bottom: 0.4rem;">{host.name}</h2>
+      <p class="muted" style="margin-bottom: 1.5rem;">{host.title}</p>
+
+      {host.bioLong.map((para) => <p>{para}</p>)}
+
+      <hr class="divider" style="margin: 3rem 0;" />
+
+      <h3 style="margin-bottom: 1rem;">Subscribe wherever you listen</h3>
+      <ListenOn primaryOnly={false} />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,53 @@
+---
+import { site, listenLinks, supportLinks, socialLinks, navigation } from '~/config/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>{site.name}</h4>
+        <p style="color: color-mix(in oklab, var(--paper) 80%, transparent); max-width: 38ch; margin: 0;">
+          {site.description}
+        </p>
+      </div>
+
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          {listenLinks.filter((l) => l.primary).map((l) => (
+            <li><a href={l.url} target="_blank" rel="noopener noreferrer">{l.name}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4>Site</h4>
+        <ul>
+          {navigation.map((item) => (
+            <li><a href={item.href}>{item.name}</a></li>
+          ))}
+        </ul>
+        <h4 style="margin-top: 1.5rem;">Support</h4>
+        <ul>
+          {supportLinks.slice(0, 2).map((s) => (
+            <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-meta">
+      <div>© {year} The Time Is Now Productions</div>
+      <div>
+        {socialLinks.map((s, i) => (
+          <>
+            {i > 0 && ' · '}
+            <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a>
+          </>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

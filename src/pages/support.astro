@@ -1,0 +1,37 @@
+---
+import Base from '~/layouts/Base.astro';
+import { supportLinks } from '~/config/site';
+---
+
+<Base
+  title="Support the show"
+  description="A Resonant Life is independent and ad-free. Tips, coffee, and recurring support all keep it going."
+>
+  <section class="section">
+    <div class="container" style="max-width: 760px;">
+      <span class="eyebrow">Support</span>
+      <h1 style="margin: 0.4rem 0 0.6rem;">If something here has helped you</h1>
+      <p style="font-size: var(--fs-lg); color: var(--ink-soft); margin-bottom: 2rem;">
+        A Resonant Life is independent. There are no ads, no sponsors, no paywalls. If an episode has been useful, you can chip in directly. Every coffee genuinely keeps it going.
+      </p>
+
+      <div class="ep-list" style="grid-template-columns: 1fr; gap: 1rem;">
+        {supportLinks.map((s) => (
+          <a class="ep-card" href={s.url} target="_blank" rel="noopener noreferrer" style="display: block; padding: 1.4rem;">
+            <span class="ep-card-meta">{s.name}</span>
+            <h3 class="ep-card-title" style="margin: 0.4rem 0 0.5rem; font-size: var(--fs-xl);">
+              {s.name} →
+            </h3>
+            <p style="margin: 0; color: var(--ink-soft);">{s.blurb}</p>
+          </a>
+        ))}
+      </div>
+
+      <hr class="divider" style="margin: 3rem 0;" />
+
+      <p class="muted" style="font-size: var(--fs-sm);">
+        Prefer to support without sending money? Sharing an episode with someone who'd appreciate it works just as well. So does leaving a review on Apple Podcasts.
+      </p>
+    </div>
+  </section>
+</Base>

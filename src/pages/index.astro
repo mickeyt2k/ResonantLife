@@ -1,0 +1,170 @@
+---
+import Base from '~/layouts/Base.astro';
+import EpisodeCard from '~/components/EpisodeCard.astro';
+import ListenOn from '~/components/ListenOn.astro';
+import Newsletter from '~/components/Newsletter.astro';
+import { getFeed } from '~/lib/rss';
+import { getPlatformLinks } from '~/lib/links';
+import { site, host, supportLinks, startHere } from '~/config/site';
+
+const feed = await getFeed();
+const latest = feed.episodes[0];
+const recent = feed.episodes.slice(0, 6);
+// Curated "start here" episode for newcomers. Falls back to latest if the
+// configured slug is null or doesn't match any episode.
+const startHereEp =
+  feed.episodes.find((e) => e.slug === startHere.episodeSlug) ?? latest;
+const platformLinks = latest ? getPlatformLinks(latest) : [];
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="fade-in delay-1">
+          <span class="eyebrow">A podcast with Mike Thompson</span>
+          <h1 class="hero-headline">
+            Buddhist wisdom <em>meets</em> daily life.
+          </h1>
+          <p class="hero-blurb">
+            {site.description}
+          </p>
+          <div class="hero-actions">
+            <a href="/episodes" class="btn btn-primary">All episodes</a>
+            {latest && (
+              <a href={`/episodes/${latest.slug}`} class="btn btn-outline">
+                Latest: {latest.title.length > 30 ? latest.title.slice(0, 28) + '…' : latest.title}
+              </a>
+            )}
+          </div>
+          <div style="margin-top: 1.6rem;">
+            <ListenOn />
+          </div>
+        </div>
+
+        <div class="hero-art fade-in delay-2">
+          <img
+            src="/brand/cover-main.png"
+            alt={`${site.name} podcast cover art`}
+            width="1200"
+            height="1200"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest episode (deep-link out) -->
+  {latest && (
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Latest episode</h2>
+          <a href="/episodes">All episodes →</a>
+        </div>
+        <article class="ep-featured">
+          <div class="ep-featured-art">
+            {latest.imageUrl && <img src={latest.imageUrl} alt="" />}
+          </div>
+          <div>
+            <span class="ep-card-meta">
+              {latest.pubDateFormatted}
+              {latest.duration && <> · {latest.duration}</>}
+            </span>
+            <h3 class="ep-featured-title">{latest.title}</h3>
+            <p style="color: var(--ink-soft); margin-bottom: 1.4rem;">
+              {latest.excerpt}
+            </p>
+            <div class="listen-row" style="margin: 0;">
+              <span class="listen-row-label">Listen on</span>
+              {platformLinks.map((p) => (
+                <a class="platform-pill" href={p.url} target="_blank" rel="noopener noreferrer">
+                  {p.name}
+                </a>
+              ))}
+              <a href={`/episodes/${latest.slug}`} class="btn btn-ghost" style="margin-left: auto;">
+                Show notes →
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )}
+
+  <!-- New here? — featured "start here" pick (curated via src/config/site.ts) -->
+  {startHereEp && (
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div style="background: var(--brand-yellow); border-radius: 24px; padding: clamp(1.5rem, 4vw, 2.5rem); display: grid; grid-template-columns: 1fr; gap: 1.4rem; align-items: center;">
+          <div>
+            <span class="eyebrow" style="color: var(--ink);">New here?</span>
+            <h3 style="margin: 0.4rem 0 0.6rem;">Start with this one.</h3>
+            <p style="margin: 0; max-width: 50ch; color: var(--ink-soft);">
+              Each episode stands on its own, but if you'd like a way in, this is a good place to begin.
+            </p>
+          </div>
+          <div>
+            <a href={`/episodes/${startHereEp.slug}`} class="btn btn-primary">
+              Listen to {startHereEp.title.length > 32 ? startHereEp.title.slice(0, 30) + '…' : startHereEp.title}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Recent episodes -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-head">
+        <h2>Recent episodes</h2>
+        <a href="/episodes">View all →</a>
+      </div>
+      <div class="ep-list cols-2">
+        {recent.slice(1, 5).map((ep) => <EpisodeCard episode={ep} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- About teaser -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container" style="display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
+      <div>
+        <span class="eyebrow">About the host</span>
+        <h2 style="margin: 0.4rem 0 0.8rem;">{host.name}</h2>
+        <p style="font-size: var(--fs-lg); color: var(--ink-soft); max-width: 60ch;">
+          {host.bioShort}
+        </p>
+        <p style="margin-top: 1rem;">
+          <a href="/about" class="btn btn-ghost">More about Mike →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <Newsletter />
+
+  <!-- Support -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Support the show</h2>
+      </div>
+      <p style="max-width: 60ch; margin-bottom: 2rem; color: var(--ink-soft);">
+        A Resonant Life is independent and ad-free. If something here has helped you, you can chip in directly. Every coffee genuinely keeps it going.
+      </p>
+      <div class="ep-list cols-3">
+        {supportLinks.map((s) => (
+          <a class="ep-card" href={s.url} target="_blank" rel="noopener noreferrer" style="display: block;">
+            <span class="ep-card-meta">Support</span>
+            <h3 class="ep-card-title" style="margin-top: 0.4rem;">{s.name}</h3>
+            <p class="ep-card-excerpt" style="-webkit-line-clamp: 3;">{s.blurb}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

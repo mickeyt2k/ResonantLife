@@ -1,0 +1,20 @@
+---
+import { listenLinks } from '~/config/site';
+
+interface Props {
+  label?: string;
+  primaryOnly?: boolean;
+  align?: 'start' | 'center';
+}
+const { label = 'Listen on', primaryOnly = true, align = 'start' } = Astro.props;
+const links = primaryOnly ? listenLinks.filter((l) => l.primary) : listenLinks;
+---
+
+<div class="listen-on" style={align === 'center' ? 'justify-content: center;' : ''}>
+  {label && <span class="label">{label}</span>}
+  {links.map((l) => (
+    <a class="platform-pill" href={l.url} target="_blank" rel="noopener noreferrer">
+      {l.name}
+    </a>
+  ))}
+</div>

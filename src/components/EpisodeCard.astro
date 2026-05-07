@@ -1,0 +1,25 @@
+---
+import type { Episode } from '~/lib/rss';
+
+interface Props {
+  episode: Episode;
+}
+const { episode } = Astro.props;
+const href = `/episodes/${episode.slug}`;
+---
+
+<a class="ep-card" href={href}>
+  <div class="ep-card-art">
+    {episode.imageUrl && (
+      <img src={episode.imageUrl} alt="" loading="lazy" decoding="async" />
+    )}
+  </div>
+  <div class="ep-card-body">
+    <span class="ep-card-meta">
+      {episode.pubDateFormatted}
+      {episode.duration && <> · {episode.duration}</>}
+    </span>
+    <h3 class="ep-card-title">{episode.title}</h3>
+    <p class="ep-card-excerpt">{episode.excerpt}</p>
+  </div>
+</a>

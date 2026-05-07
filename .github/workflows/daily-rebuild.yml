@@ -1,0 +1,30 @@
+name: Daily site rebuild
+
+# Cloudflare Pages rebuilds automatically on git push.
+# This workflow triggers a rebuild once a day so new RSS episodes appear
+# without you having to push code.
+#
+# Setup:
+#   1. In Cloudflare Pages → your project → Settings → Builds & deployments,
+#      click "Generate deploy hook" and copy the URL.
+#   2. In GitHub → repo → Settings → Secrets → Actions, create a secret named
+#      CF_PAGES_DEPLOY_HOOK with the URL as its value.
+
+on:
+  schedule:
+    # 06:00 UTC daily — change to suit (cron is in UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # allow manual trigger from the GitHub UI
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages deploy hook
+        run: |
+          if [ -z "${{ secrets.CF_PAGES_DEPLOY_HOOK }}" ]; then
+            echo "CF_PAGES_DEPLOY_HOOK secret is not set."
+            exit 1
+          fi
+          curl -fsSL -X POST "${{ secrets.CF_PAGES_DEPLOY_HOOK }}"
+          echo "Triggered Pages rebuild."

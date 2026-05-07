@@ -1,0 +1,69 @@
+---
+import { newsletter, site } from '~/config/site';
+---
+
+<section class="newsletter container" aria-labelledby="newsletter-title" style="margin-bottom: 2rem;">
+  <div>
+    <span class="eyebrow" style="color: var(--brand-yellow);">Newsletter</span>
+    <h2 id="newsletter-title">{newsletter.ctaTitle}</h2>
+    <p>{newsletter.ctaBlurb}</p>
+  </div>
+
+  <form class="newsletter-form" id="newsletterForm" novalidate>
+    <div class="row">
+      <input
+        type="email"
+        name="email"
+        id="newsletterEmail"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+        aria-label="Email address"
+      />
+      <button type="submit" id="newsletterSubmit">Subscribe</button>
+    </div>
+    <div class="form-msg" id="newsletterMsg" role="status" aria-live="polite"></div>
+  </form>
+</section>
+
+<script define:vars={{ endpoint: site.newsletterFormEndpoint }}>
+  const form = document.getElementById('newsletterForm');
+  const input = document.getElementById('newsletterEmail');
+  const btn = document.getElementById('newsletterSubmit');
+  const msg = document.getElementById('newsletterMsg');
+
+  if (form && input && btn && msg) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!email || !/.+@.+\..+/.test(email)) {
+        msg.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Subscribing…';
+      msg.textContent = '';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          msg.textContent = "You're on the list. Thank you.";
+          input.value = '';
+        } else {
+          const body = await res.json().catch(() => ({}));
+          msg.textContent = body?.error || 'Something went wrong. Please try again.';
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again in a moment.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  }
+</script>

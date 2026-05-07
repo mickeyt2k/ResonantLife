@@ -1,0 +1,65 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getFeed } from '~/lib/rss';
+import { getPlatformLinks } from '~/lib/links';
+import type { Episode } from '~/lib/rss';
+
+export async function getStaticPaths() {
+  const feed = await getFeed();
+  return feed.episodes.map((episode) => ({
+    params: { slug: episode.slug },
+    props: { episode },
+  }));
+}
+
+interface Props {
+  episode: Episode;
+}
+const { episode } = Astro.props;
+const platformLinks = getPlatformLinks(episode);
+---
+
+<Base
+  title={episode.title}
+  description={episode.excerpt}
+  ogImage={episode.imageUrl}
+>
+  <article class="container ep-detail">
+    <div class="ep-detail-art">
+      {episode.imageUrl && <img src={episode.imageUrl} alt="" />}
+    </div>
+
+    <div>
+      <a href="/episodes" style="font-size: var(--fs-sm); text-decoration: none; color: var(--muted);">
+        ← All episodes
+      </a>
+      <h1 class="ep-detail-title">{episode.title}</h1>
+      <div class="ep-detail-meta">
+        <span>{episode.pubDateFormatted}</span>
+        {episode.duration && <span>{episode.duration}</span>}
+        {episode.seasonNumber && <span>Season {episode.seasonNumber}</span>}
+        {episode.episodeNumber && <span>Episode {episode.episodeNumber}</span>}
+      </div>
+
+      <div class="listen-row">
+        <span class="listen-row-label">Listen on</span>
+        {platformLinks.map((p) => (
+          <a class="platform-pill" href={p.url} target="_blank" rel="noopener noreferrer">
+            {p.name}
+            {!p.episodeSpecific && (
+              <span style="font-weight: 400; opacity: 0.6; font-size: 0.85em;">↗</span>
+            )}
+          </a>
+        ))}
+      </div>
+
+      {!platformLinks.every((p) => p.episodeSpecific) && (
+        <p style="font-size: var(--fs-xs); color: var(--muted); margin: -0.6rem 0 1.5rem;">
+          Apple Podcasts and YouTube links open the show — search for this episode title there.
+        </p>
+      )}
+
+      <div class="show-notes" set:html={episode.descriptionHtml}></div>
+    </div>
+  </article>
+</Base>
