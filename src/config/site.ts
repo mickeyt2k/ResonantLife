@@ -11,7 +11,7 @@ export const site = {
   url: 'https://www.resonantlife.net',
   // Anchor / Spotify for Creators RSS feed
   rssFeedUrl: 'https://anchor.fm/s/b77e8620/podcast/rss/',
-  contactEmail: 'mike@resonant.social',
+  contactEmail: 'mike@resonantlife.net',
   // Where the contact form Worker forwards messages
   contactFormEndpoint: '/api/contact',
   newsletterFormEndpoint: '/api/subscribe',

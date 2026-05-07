@@ -13,8 +13,8 @@ compatibility_flags = ["nodejs_compat"]
 # Non-secret env vars below; values can be edited in dashboard.
 [vars]
 ALLOWED_ORIGIN = "https://www.resonantlife.net,https://preview.resonantlife.net"
-CONTACT_TO_EMAIL = "mike@resonant.social"
-CONTACT_FROM_EMAIL = "noreply@resonant.social"
+CONTACT_TO_EMAIL = "mike@resonantlife.net"
+CONTACT_FROM_EMAIL = "hello@resonantlife.net"
 
 [observability]
 enabled = true
