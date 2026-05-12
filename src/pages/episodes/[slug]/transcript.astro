@@ -1,0 +1,105 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getFeed } from '~/lib/rss';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const transcripts = await getCollection('transcripts');
+  return transcripts.map((t) => ({
+    params: { slug: t.data.episodeSlug },
+    props: { transcript: t },
+  }));
+}
+
+const { slug } = Astro.params;
+const { transcript } = Astro.props;
+
+const feed = await getFeed();
+const episode = feed.episodes.find((e) => e.slug === slug);
+
+const { Content } = await render(transcript);
+---
+
+<Base
+  title={episode ? `Transcript: ${episode.title}` : 'Transcript'}
+  description={episode ? `Full transcript of "${episode.title}" — A Resonant Life Podcast` : 'Episode transcript'}
+>
+  <article class="container transcript">
+    <header class="transcript-header">
+      <p class="transcript-label">Transcript</p>
+      {episode && (
+        <h1>{episode.title}</h1>
+        <p class="transcript-meta">
+          {episode.pubDateFormatted}
+          &nbsp;·&nbsp;
+          <a href={`/episodes/${slug}`}>← Back to episode</a>
+        </p>
+      )}
+    </header>
+
+    <div class="transcript-body">
+      <Content />
+    </div>
+
+    <footer class="transcript-footer">
+      <a href={`/episodes/${slug}`}>← Back to episode</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .transcript {
+    max-width: 680px;
+    padding-block: 3rem 6rem;
+  }
+
+  .transcript-label {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent, #e64531);
+    margin-bottom: 0.5rem;
+  }
+
+  .transcript-header h1 {
+    font-size: 1.75rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .transcript-meta {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    margin-bottom: 3rem;
+  }
+
+  .transcript-meta a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .transcript-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .transcript-body :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .transcript-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border, #e5e5e5);
+    font-size: var(--fs-sm);
+  }
+
+  .transcript-footer a {
+    color: var(--color-accent, #e64531);
+    text-decoration: none;
+  }
+
+  .transcript-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

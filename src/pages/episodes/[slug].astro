@@ -3,6 +3,7 @@ import Base from '~/layouts/Base.astro';
 import { getFeed } from '~/lib/rss';
 import { getPlatformLinks } from '~/lib/links';
 import type { Episode } from '~/lib/rss';
+import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const feed = await getFeed();
@@ -17,6 +18,8 @@ interface Props {
 }
 const { episode } = Astro.props;
 const platformLinks = getPlatformLinks(episode);
+const transcripts = await getCollection('transcripts');
+const hasTranscript = transcripts.some((t) => t.data.episodeSlug === episode.slug);
 ---
 
 <Base
@@ -59,7 +62,26 @@ const platformLinks = getPlatformLinks(episode);
         </p>
       )}
 
+      {hasTranscript && (
+        <a href={`/episodes/${episode.slug}/transcript`} class="transcript-link">
+          Read transcript →
+        </a>
+      )}
+
       <div class="show-notes" set:html={episode.descriptionHtml}></div>
     </div>
   </article>
 </Base>
+
+<style>
+  .transcript-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    font-size: var(--fs-sm);
+    color: var(--color-accent, #e64531);
+    text-decoration: none;
+  }
+  .transcript-link:hover {
+    text-decoration: underline;
+  }
+</style>
