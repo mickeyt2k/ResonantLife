@@ -3,7 +3,7 @@ dist/
 .astro/
 # transcripts (raw scripts stay local, processed files are committed)
 transcripts/raw/*.txt
-
+transcripts/raw/*.srt
 # dependencies
 node_modules/
 
