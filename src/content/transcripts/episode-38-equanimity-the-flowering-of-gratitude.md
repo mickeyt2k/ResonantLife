@@ -1,5 +1,5 @@
 ---
-episodeSlug: "S1E38-Equanimity-The-Flowering-of-Gratitude"
+episodeSlug: "episode-38-equanimity-the-flowering-of-gratitude"
 ---
 
 [MUSIC] And welcome. Welcome to A Resonant Life, produced by The Time Is Now Productions. I am Mike Thompson, your host and reflector in chief. Over the next 20 to 30 minutes, we will discuss experiences and insights about living a life devoted to uncovering our authentic selves and finding fulfilling purpose from the past, the present, and the future. To kick off our discussion, I'll share my opinions gathered from my life and
